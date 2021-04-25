@@ -18,22 +18,22 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/Maofryy/RustProjects/task_manager">
+  <a href="https://github.com/Maofryy/RustProjects/tree/main/task_manager">
     <img src="images/rustacean-flat-happy.png" alt="Logo" width="110" height="80">
   </a>
 
-  <h3 align="center">Rust TaskManager</h3>
+  <h3 align="center">Rust Task Manager</h3>
 
   <p align="center">
     Task Manager implementation using Rust, focused on learning the lang.
     <br />
-    <a href="https://github.com/Maofryy/RustProjects/task_manager"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/Maofryy/RustProjects/tree/main/task_manager"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     ·
-    <a href="https://github.com/maofryy/RustProjects/task_manager/issues">Report Bug</a>
+    <a href="https://github.com/maofryy/RustProjects/issues">Report Bug</a>
     ·
-    <a href="https://github.com/maofryy/RustProjects/task_manager/issues">Request Feature</a>
+    <a href="https://github.com/maofryy/RustProjects/issues">Request Feature</a>
     .
   </p>
 </p>
@@ -93,12 +93,12 @@ To get a local copy up and running follow these simple steps.
 - ### Installation
   - ### Clone repo
     ```sh
-    git clone https://github.com/epsi-poec-2021/todos-group-1/tree/branche_maori.git
+    git clone https://github.com/Maofryy/RustProjects.git
     ```
 
   - ### Build and run project
     ```sh
-      cd repo/rust_impl
+      cd repo/task_manager
       cargo run
     ```
 
@@ -162,7 +162,7 @@ This is a TaskManager: able to store actions or things to do, mark them as done,
   - ### More attributes to each tasks
   - ### Sorting by last task updated
 
-See the [open issues](https://github.com/maofryy/todos-group-1/tree/branche_maori/issues) for a list of proposed features (and known issues).
+See the [open issues](https://github.com/maofryy/RustProject/issues) for a list of proposed features (and known issues).
 
 
 
@@ -187,8 +187,8 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Maori Benhassine - maori.benhassine@gmail.com
-Project Link: [https://github.com/Maofryy/RustProjects/task_manager](https://github.com/Maofryy/RustProjects/task_manager)
+Maori Benhassine - maori.benhassine@gmail.com \
+Project Link: [https://github.com/Maofryy/RustProjects](https://github.com/Maofryy/RustProjects)
 
 
 <!--
