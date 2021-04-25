@@ -1,0 +1,14 @@
+[package]
+name = "rust_impl"
+version = "0.1.0"
+authors = ["Maofryy <41508644+Maofryy@users.noreply.github.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+#[dependencies]
+# rusqlite = "0.25.1"
+
+[dependencies.rusqlite]
+version = "0.25.1"
+features = ["bundled"]
