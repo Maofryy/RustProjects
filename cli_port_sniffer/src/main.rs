@@ -1,3 +1,4 @@
+use std::cmp::Ordering;
 use std::env;
 use std::io::{self, Write};
 use std::net::{IpAddr, TcpStream};
@@ -58,16 +59,37 @@ impl Arguments {
     }
 }
 
-fn scan(tx: Sender<u16>, start_port: u16, addr: IpAddr, num_threads: u16) {
+#[derive(PartialEq, PartialOrd, Ord, Eq)]
+struct Port {
+    port: u16,
+    status: &'static str,
+}
+
+fn scan(tx: Sender<Port>, start_port: u16, addr: IpAddr, num_threads: u16) {
     let mut port: u16 = start_port + 1;
     loop {
         match TcpStream::connect((addr, port)) {
             Ok(_) => {
                 print!(".");
                 io::stdout().flush().unwrap();
-                tx.send(port).unwrap();
+                let ret = Port {
+                    port,
+                    status: "open",
+                };
+                tx.send(ret).unwrap();
             }
-            Err(_) => {}
+            Err(e) => match e.kind() {
+                std::io::ErrorKind::ConnectionRefused => {
+                    print!("!");
+                    io::stdout().flush().unwrap();
+                    let ret = Port {
+                        port,
+                        status: "closed",
+                    };
+                    tx.send(ret).unwrap();
+                }
+                _ => {}
+            },
         }
 
         if (MAX_THREADS - port) <= num_threads {
@@ -119,15 +141,17 @@ fn main() {
         out.push(p);
     }
 
-    println!("\nOpened ports on {}:\nPORT     STATE SERVICE", addr);
+    println!("\nOpened ports on {}:\nPORT     STATE  SERVICE", addr);
+    // need to impl sort
     out.sort();
     for v in out {
-        let mut nb = v.to_string();
+        let mut nb = v.port.to_string();
         nb.push_str("/tcp");
         println!(
-            "{:<5} open  {:<}",
+            "{:<5} {:<6} {:<}",
             nb,
-            tcp_dict.get(&v.to_string()).unwrap()
+            v.status,
+            tcp_dict.get(&v.port.to_string()).unwrap()
         );
     }
     //TODO Implement tcp list server to add description
