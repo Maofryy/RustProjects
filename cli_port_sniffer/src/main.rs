@@ -6,6 +6,8 @@ use std::str::FromStr;
 use std::sync::mpsc::{channel, Sender};
 use std::thread;
 
+mod csv_utils;
+
 const MAX_THREADS: u16 = 65535;
 
 struct Arguments {
@@ -61,7 +63,7 @@ fn scan(tx: Sender<u16>, start_port: u16, addr: IpAddr, num_threads: u16) {
     loop {
         match TcpStream::connect((addr, port)) {
             Ok(_) => {
-                print!("{}.", port);
+                print!(".");
                 io::stdout().flush().unwrap();
                 tx.send(port).unwrap();
             }
@@ -86,6 +88,8 @@ fn print_usage() {
 fn main() {
     println!("Welcome to your CLI Port sniffer.");
     // Handle args
+
+    let tcp_dict = csv_utils::read_csv("./data/tcp.csv".to_string()).unwrap();
     let args: Vec<String> = env::args().collect();
     let program = args[0].clone();
     let arguments = Arguments::new(&args).unwrap_or_else(|err| {
@@ -115,10 +119,16 @@ fn main() {
         out.push(p);
     }
 
-    println!("\nFinished testing ports :");
+    println!("\nOpened ports on {}:\nPORT     STATE SERVICE", addr);
     out.sort();
     for v in out {
-        println!("{} is open", v);
+        let mut nb = v.to_string();
+        nb.push_str("/tcp");
+        println!(
+            "{:<5} open  {:<}",
+            nb,
+            tcp_dict.get(&v.to_string()).unwrap()
+        );
     }
     //TODO Implement tcp list server to add description
     //TODO add other flags behaviors ?
