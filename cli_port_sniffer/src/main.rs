@@ -1,12 +1,12 @@
 use std::env;
-use std::net::{TcpStream, IpAddr};
+use std::io::{self, Write};
+use std::net::{IpAddr, TcpStream};
 use std::process;
 use std::str::FromStr;
 use std::sync::mpsc::{channel, Sender};
 use std::thread;
-use std::io::{self, Write};
 
-const MAX_THREADS: u16 = 5061;
+const MAX_THREADS: u16 = 65535;
 
 struct Arguments {
     flag: String,
@@ -61,15 +61,11 @@ fn scan(tx: Sender<u16>, start_port: u16, addr: IpAddr, num_threads: u16) {
     loop {
         match TcpStream::connect((addr, port)) {
             Ok(_) => {
-                print!(".");
+                print!("{}.", port);
                 io::stdout().flush().unwrap();
                 tx.send(port).unwrap();
             }
-            Err(_) => {
-                print!("F");
-                io::stdout().flush().unwrap();
-            }
-
+            Err(_) => {}
         }
 
         if (MAX_THREADS - port) <= num_threads {
@@ -124,6 +120,8 @@ fn main() {
     for v in out {
         println!("{} is open", v);
     }
+    //TODO Implement tcp list server to add description
+    //TODO add other flags behaviors ?
 }
 
 #[cfg(test)]
@@ -152,7 +150,5 @@ mod tests {
     }
 
     #[test]
-    fn test_scan() {
-
-    }
+    fn test_scan() {}
 }
