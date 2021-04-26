@@ -1,12 +1,12 @@
 use std::env;
-use std::io::{self, Write};
-use std::net::{IpAddr, TcpStream};
+use std::net::{TcpStream, IpAddr};
 use std::process;
 use std::str::FromStr;
 use std::sync::mpsc::{channel, Sender};
 use std::thread;
+use std::io::{self, Write};
 
-const MAX_THREADS: u16 = 1024;
+const MAX_THREADS: u16 = 5061;
 
 struct Arguments {
     flag: String,
@@ -35,7 +35,7 @@ impl Arguments {
                 return Err("help");
             } else if flag.contains("-h") || flag.contains("--help") {
                 return Err("Too many arguments.");
-            } else if flag.contains("-j") && args.len() == 4 {
+            } else if flag.contains("-j") {
                 let ipaddr = match IpAddr::from_str(&args[3]) {
                     Ok(s) => s,
                     Err(_) => return Err("Incorrect ip address format."),
@@ -65,7 +65,11 @@ fn scan(tx: Sender<u16>, start_port: u16, addr: IpAddr, num_threads: u16) {
                 io::stdout().flush().unwrap();
                 tx.send(port).unwrap();
             }
-            Err(_) => {}
+            Err(_) => {
+                print!("F");
+                io::stdout().flush().unwrap();
+            }
+
         }
 
         if (MAX_THREADS - port) <= num_threads {
@@ -99,6 +103,7 @@ fn main() {
     // divide into threadd, scan ip
     let num_threads = arguments.threads;
     let addr = arguments.ipaddr;
+    // Other flag options ideas ?
     let (tx, rx) = channel();
     for i in 0..num_threads {
         let tx = tx.clone();
@@ -114,7 +119,7 @@ fn main() {
         out.push(p);
     }
 
-    println!("");
+    println!("\nFinished testing ports :");
     out.sort();
     for v in out {
         println!("{} is open", v);
@@ -147,5 +152,7 @@ mod tests {
     }
 
     #[test]
-    fn test_scan() {}
+    fn test_scan() {
+
+    }
 }
