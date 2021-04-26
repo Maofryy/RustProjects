@@ -18,16 +18,16 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/Maofryy/RustProjects/tree/main/task_manager">
+  <a href="https://github.com/Maofryy/RustProjects/tree/main/cli_port_sniffer">
     <img src="images/rustacean-flat-happy.png" alt="Logo" width="110" height="80">
   </a>
 
-  <h3 align="center">Rust Task Manager</h3>
+  <h3 align="center">TCP port sniffer</h3>
 
   <p align="center">
-    Task Manager implementation using Rust, focused on learning the lang.
+    Implementation of a tcp port sniffer binary, interacting with cli.
     <br />
-    <a href="https://github.com/Maofryy/RustProjects/tree/main/task_manager"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/Maofryy/RustProjects/tree/main/cli_port_sniffer"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     ·
@@ -80,7 +80,7 @@ Here's a blank template to get started:
 
 * [Rust Programming Language](https://www.rust-lang.org/)
 * [Cargo](https://doc.rust-lang.org/cargo/guide/)
-* [Rusqlite](https://github.com/rusqlite/rusqlite)
+* [csv](https://crates.io/crates/csv)
 
 
 <!-- GETTING STARTED -->
@@ -98,7 +98,7 @@ To get a local copy up and running follow these simple steps.
 
   - ### Build and run project
     ```sh
-      cd repo/task_manager
+      cd repo/cli_port_sniffer
       cargo run
     ```
 
@@ -108,49 +108,46 @@ To get a local copy up and running follow these simple steps.
 This is a TaskManager: able to store actions or things to do, mark them as done, un check them and delete them.
 - System usage : 
     ```sh
-        Usage :
-        + <label>   : Create new task with <label>
-        - <id>      : Remove task from list by <id>
-        x <id>      : Check task by <id>
-        c <id>      : Uncheck task by <id>
-        clear       : Erase all tasks
-        quit        : Exit task manager
+        Usage:
+          ./cli_port_sniffer -h                           : Print this help message
+          ./cli_port_sniffer <ip_addr>                    : Sniff all ports of target <ip_addr>
+          ./cli_port_sniffer -j <thread_number> <ip_addr> : Sniff all ports of <ip_addr> using <thread_number> threads.
     ``` 
-- Add a task with the ```+ <label>``` command :
+-  ```./cli_port_sniffer -j 1000 <ip_addr>``` command :
     ```sh
-    >>> + task
-    0 [ ] task
+      Welcome to your CLI Port sniffer.
+      ........!!!!!!!!!!!!!!!!!
+      Opened ports on <id_addr>:
+      PORT     STATE  SERVICE
+      2000/tcp closed Remotely Anywhere / VIA NET.WORKS PostOffice Plus
+      2001/tcp closed Cisco mgmt / Remotely Anywhere
+      2002/tcp closed globe
+      2003/tcp closed GNU finger
+      2004/tcp closed mailbox
+      2005/tcp closed encrypted symmetric telnet/login
+      2006/tcp closed invokator
+      2007/tcp closed dectalk
+      2008/tcp closed conf
+      2009/tcp closed news
+      2010/tcp open   search
+      2011/tcp closed raid
+      2012/tcp closed ttyinfo
+      2013/tcp open   raid-am
+      2014/tcp open   troff
+      2015/tcp open   cypress
+      2016/tcp closed bootserver
+      2017/tcp open   cypress-stat
+      2018/tcp open   terminaldb
+      2019/tcp open   whosockami
+      2020/tcp open   xinupageserver
+      2021/tcp closed servexec
     ```
-    The system will provide an id and store the task
-- Delete a task by id ```- <id> ```
-    ```sh
-    >>> - 0
-    Deleted task 0
-    ```
-- Check a task : ```x <id>```
-    ```bash
-    0 [ ] task
-    >>> x 0
-    Checked task 0
-    0 [x] task
-    ```
-- Un-check a task : ```c <id>```
-    ```sh
-    0 [x] task
-    >>> c 0
-    Unchecked task 0
-    0 [ ] task
-    ```
-- Cleari the tasks list : ```clear```
-    ```sh
-    >>> clear
-    Tasks cleared.
-    ```
-- Exit from the manager: ```quit```
-    ```sh
-    >>> quit
-    Terminating program.
-    ```
+    > Running with large number of threads is recommended: If numerous ports are timing out it may take a while to complete.
+    "." indicates open port found.
+    "!" indicates port from which the connection was refused
+    "" *indicates* unreachable or timing out ports
+
+    There is then a table sorted by port number displaying status and description of the ports scanned.
 <!-- _For more examples, please refer to the [Documentation](https://example.com)_
 
 
@@ -158,9 +155,8 @@ This is a TaskManager: able to store actions or things to do, mark them as done,
 <!-- ROADMAP -->
 ## Roadmap
 ### Features to implement
-  - ### Persistence : Loading and Writing tasks in database [DONE]!
-  - ### More attributes to each tasks
-  - ### Sorting by last task updated
+  - ### Better sorting implementation : Would want sorted by status open in first then by port number
+  - ### Finish scan() tests
 
 See the [open issues](https://github.com/maofryy/RustProject/issues) for a list of proposed features (and known issues).
 

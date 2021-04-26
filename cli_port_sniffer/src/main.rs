@@ -1,4 +1,3 @@
-use std::cmp::Ordering;
 use std::env;
 use std::io::{self, Write};
 use std::net::{IpAddr, TcpStream};
@@ -119,7 +118,8 @@ fn main() {
             process::exit(0);
         } else {
             eprintln!("{} problem parsing arguments: {}", program, err);
-            process::exit(1);
+            print_usage();
+            process::exit(0);
         }
     });
     // divide into threadd, scan ip
@@ -154,7 +154,6 @@ fn main() {
             tcp_dict.get(&v.port.to_string()).unwrap()
         );
     }
-    //TODO Implement tcp list server to add description
     //TODO add other flags behaviors ?
 }
 
@@ -184,5 +183,9 @@ mod tests {
     }
 
     #[test]
-    fn test_scan() {}
+    fn test_scan() {
+        // test that the scan is returning properly ?
+        // test error behaviors
+        // Is there one Ok return interesting ?
+    }
 }
