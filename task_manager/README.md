@@ -161,6 +161,7 @@ This is a TaskManager: able to store actions or things to do, mark them as done,
   - ### Persistence : Loading and Writing tasks in database [DONE]!
   - ### More attributes to each tasks
   - ### Sorting by last task updated
+  - ### Look at diesel crate for db interaction
 
 See the [open issues](https://github.com/maofryy/RustProject/issues) for a list of proposed features (and known issues).
 
