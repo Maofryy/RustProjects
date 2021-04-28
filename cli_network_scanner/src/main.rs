@@ -77,6 +77,8 @@ fn main() {
 
     let args: Vec<String> = env::args().collect();
     let program = args[0].clone();
+
+    //TODO Rework usage and arguments needs
     let arguments = Arguments::new(&args).unwrap_or_else(|err| {
         if err.contains("help") {
             process::exit(0);
@@ -88,7 +90,15 @@ fn main() {
     });
     println!("{:?}", arguments);
 
+    //TODO for each non-null prefix, launch a network scan
+    //TODO      The range to scan depends on the prefix ?
     for iface in datalink::interfaces() {
-        println!("{:?}", iface.ips);
+        if iface.ips[0].prefix() != 0 {
+            //? Create a thread for each ip
+            for ip in iface.ips[0].iter() {
+                //? Send an arp request and wait for the response
+                println!("{:?}", ip);
+            }
+        };
     }
 }
