@@ -1,13 +1,13 @@
 extern crate pnet;
 
-use pnet::packet::arp::ArpOperation;
-use pnet::util::MacAddr;
+use pnet::datalink;
 use std::env;
-use std::net::{IpAddr, SocketAddr};
+use std::io::{self, Write};
+use std::net::IpAddr;
 use std::process;
 use std::str::FromStr;
-
-use pnet::datalink;
+use std::sync::mpsc::{channel, Sender};
+use std::thread;
 
 #[derive(Debug)]
 struct Arguments {
@@ -63,6 +63,31 @@ impl Arguments {
     }
 }
 
+struct PingReturn {
+    ip: IpAddr,
+    status: bool,
+}
+
+impl PingReturn {
+    fn new(ip: IpAddr, status: bool) -> Self {
+        return PingReturn { ip, status };
+    }
+}
+
+fn run_ping(tx: Sender<PingReturn>, ip: IpAddr) {
+    let output = process::Command::new("ping")
+        .arg(ip.to_string())
+        .args(&["-n", "2", "-w", "100"])
+        .output()
+        .expect("Failed to run ping ip");
+    let out_str = String::from_utf8_lossy(&output.stdout);
+    if out_str.to_string().contains("TTL=") {
+        tx.send(PingReturn::new(ip, true)).unwrap();
+    } else {
+        tx.send(PingReturn::new(ip, false)).unwrap();
+    }
+}
+
 fn print_usage() {
     println!("Usage:
     \r\t./cli_network_scanner -h                            : Print this help message
@@ -90,14 +115,34 @@ fn main() {
     });
     println!("{:?}", arguments);
 
-    //TODO for each non-null prefix, launch a network scan
-    //TODO      The range to scan depends on the prefix ?
+    // Iterate through the not null prefix interfaces
     for iface in datalink::interfaces() {
         if iface.ips[0].prefix() != 0 {
-            //? Create a thread for each ip
+            println!("INTERFACE : {}", iface.ips[0].ip());
+            println!("  DEVICES");
+            let (tx, rx) = channel();
+            //? Create a thread for each ping
             for ip in iface.ips[0].iter() {
-                //? Send an arp request and wait for the response
-                println!("{:?}", ip);
+                let tx = tx.clone();
+                //? Receiving reply for our arp query might pose prbrm, maybe pinging is all we need ?
+                thread::spawn(move || {
+                    run_ping(tx, ip);
+                });
+            }
+            let mut ids = Vec::with_capacity(256 as usize);
+            for _ in 0..256 {
+                ids.push(rx.recv());
+            }
+            for p in ids {
+                match p {
+                    Ok(s) => {
+                        if s.status {
+                            println!("  {}", s.ip);
+                            io::stdout().flush().unwrap();
+                        }
+                    }
+                    Err(_) => {}
+                }
             }
         };
     }
